@@ -16,12 +16,14 @@ int main()
 	int listenid, connfd;
 	pid_t childpid;
 	socklen_t clilen;
+	int keepalive=1;
 	struct sockaddr_in cliaddr, servaddr;
 
 	if ((listenid = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
 		printf("socket errro");
 		exit(0);
 	}
+	setsockopt(listenid,SOL_SOCKET,SO_KEEPALIVE,&keepalive,sizeof(keepalive));
 
 	bzero(&servaddr, sizeof(servaddr));
 	servaddr.sin_family = AF_INET;
