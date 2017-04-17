@@ -1,4 +1,4 @@
-include<sys / socket.h>
+#include<sys/socket.h>
 #include<strings.h>
 #include<signal.h>
 #include<arpa/inet.h>
@@ -50,16 +50,15 @@ int main()
 			if (errno == EINTR)
 				continue;
 			else
-				err_sys("accept error");
-			printf("accept error:%s (errno:%d)\n", strerror(errno), errno);
+				printf("accept error:%s (errno:%d)\n", strerror(errno), errno);
 
-			if ((childpid = fork()) == 0) {
-				close(listenid);
-				str_echo(connfd);
-				exit(0);
-			}
-			close(connfd);
 		}
+		if ((childpid = fork()) == 0) {
+			close(listenid);
+			str_echo(connfd);
+			exit(0);
+		}			
+		close(connfd);
 	}
 }
 
@@ -69,12 +68,12 @@ void str_echo(int sockfd) {
 	char buf[MAXLINE];
 	struct sockaddr_in clientaddr;
 	socklen_t clientLen = sizeof(clientaddr);
+	getpeername(sockfd, (struct sockaddr*)&clientaddr, &clientLen);
+	printf("connection form:%s  port:%d\n", inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
 again:
 	while ((n = read(sockfd, buf, MAXLINE)) > 0) {
 		buf[n] = '\0';
 		write(sockfd, buf, n);
-		getpeername(sockfd, (struct sockaddr*)&clientaddr, &clientLen);
-		printf("connection form:%s  port:%d\n", inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
 
 	}
 	if (n < 0 && errno == EINTR)

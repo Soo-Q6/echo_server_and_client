@@ -12,7 +12,7 @@
 #define MAXLINE 1024
 void str_cli(FILE*fp, int sockfd);
 int main(int argc, char **argv) {
-	int sockfd[5];
+	int sockfd;
 	struct sockaddr_in servaddr;
 	/*if(argc!=2){
 	printf("usefjds");
@@ -21,17 +21,23 @@ int main(int argc, char **argv) {
 
 	char * ipaddr = "127.0.0.1";
 	int i = 0;
-	for (i = 0; i < 5; i++) {
-		sockfd[i] = socket(AF_INET, SOCK_STREAM, 0);
-
+	//for (i = 0; i < 5; i++) {
+		//sockfd[i] = socket(AF_INET, SOCK_STREAM, 0);
+		sockfd = socket(AF_INET, SOCK_STREAM, 0);
 		bzero(&servaddr, sizeof(servaddr));
 		servaddr.sin_family = AF_INET;
 		servaddr.sin_port = htons(SERV_PORT);
 		inet_pton(AF_INET, ipaddr, &servaddr.sin_addr);
 
-		connect(sockfd[i], (struct sockaddr*)&servaddr, sizeof(servaddr));
-	}
-	str_cli(stdin, sockfd[0]);
+		if(connect(sockfd, (struct sockaddr*)&servaddr, sizeof(servaddr))<0){
+			printf("connect error!\n");
+			exit(0);
+		}else{
+			printf("connect successfully!\n");
+		}
+
+	//}
+	str_cli(stdin, sockfd);
 	exit(0);
 }
 
