@@ -17,6 +17,7 @@ int main()
 	pid_t childpid;
 	socklen_t clilen;
 	int keepalive=1;
+	int reuse=1;
 	struct sockaddr_in cliaddr, servaddr;
 
 	if ((listenid = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
@@ -24,7 +25,12 @@ int main()
 		exit(0);
 	}
 	setsockopt(listenid,SOL_SOCKET,SO_KEEPALIVE,&keepalive,sizeof(keepalive));
-
+	if(setsockopt(listenid,SOL_SOCKET,SO_REUSEPORT,&reuse,sizeof(reuse))==-1){
+		printf("%s\n",strerror(errno));
+		exit(0);
+	}else{
+		printf("set socket successfully\n");
+	}
 	bzero(&servaddr, sizeof(servaddr));
 	servaddr.sin_family = AF_INET;
 	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
