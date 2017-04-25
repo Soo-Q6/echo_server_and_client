@@ -24,15 +24,6 @@ int main(int argc, char **argv) {
 	servaddr.sin_family = AF_INET;
 	servaddr.sin_port = htons(SERV_PORT);
 	inet_pton(AF_INET, argv[1], &servaddr.sin_addr);
-	if(getsockname(sockfd, (struct sockaddr *)&clientaddr, &clilen)==0){
-		if(inet_ntoa(clientaddr.sin_addr)==NULL){
-			printf("NULL\n");
-		}else{
-			printf("this client ip is %s  its port is %d\n", inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
-		}
-	}else{
-		printf("getsockname error\n");
-	}
 
 	str_cli(stdin, sockfd,( struct sockaddr *)&servaddr,sizeof(servaddr));
 	exit(0);
@@ -45,12 +36,12 @@ void str_cli(FILE*fp, int sockfd,const struct sockaddr *cliaddr,socklen_t servle
 	int n;
 	struct sockaddr_in caddr;
 	socklen_t clilen=sizeof(caddr);
-	//getsockname(sockfd, (struct sockaddr *)&clientaddr, &clilen);
-	//printf("this client ip is %s  its port is %d\n", inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
 	while (fgets(sendline, MAXLINE, fp) != NULL) {
 		sendto(sockfd,sendline,strlen(sendline),0,cliaddr,servlen);
 		n=recvfrom(sockfd,recvline,MAXLINE,0,(struct sockaddr*)&caddr,&clilen);
-		printf("this client ip is %s  its port is %d\n", inet_ntoa(caddr.sin_addr), ntohs(caddr.sin_port));
+		recvline[n]=0;
+		fputs(recvline, stdout);
+		n=recvfrom(sockfd,recvline,MAXLINE,0,(struct sockaddr*)&caddr,&clilen);
 		recvline[n]=0;
 		fputs(recvline, stdout);
 	}

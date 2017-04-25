@@ -40,11 +40,18 @@ void str_echo(int sockfd,struct sockaddr_in * cliaddr,socklen_t clilen) {
 	ssize_t len;
 	int n;
 	char buf[MAXLINE];
+	char port_num[10];
+	char a[8]="  port:";
 	while (1) {
 		len=clilen;
 		n=recvfrom(sockfd,buf,MAXLINE,0,(struct sockaddr *)cliaddr,&len);
 		printf("connection from:%s  port:%d\n",inet_ntoa(cliaddr->sin_addr),ntohs(cliaddr->sin_port));
+		sprintf(port_num,"%d",ntohs(cliaddr->sin_port));
 		sendto(sockfd,buf,n,0,cliaddr,len);
+		strcpy(buf,inet_ntoa(cliaddr->sin_addr));
+		strcat(buf,a);
+		strcat(buf,port_num);
+		sendto(sockfd,buf,strlen(buf),0,cliaddr,len);
 	}
 }
 
