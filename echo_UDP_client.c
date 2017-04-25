@@ -18,13 +18,13 @@ int main(int argc, char **argv) {
 		printf("usefjds");
 		exit(0);
 	}
+	//char *ipaddr = "192.168.42.129";
 
 	sockfd = socket(AF_INET, SOCK_DGRAM, 0);
 	bzero(&servaddr, sizeof(servaddr));
 	servaddr.sin_family = AF_INET;
 	servaddr.sin_port = htons(SERV_PORT);
 	inet_pton(AF_INET, argv[1], &servaddr.sin_addr);
-
 	str_cli(stdin, sockfd,( struct sockaddr *)&servaddr,sizeof(servaddr));
 	exit(0);
 }
@@ -41,8 +41,8 @@ void str_cli(FILE*fp, int sockfd,const struct sockaddr *cliaddr,socklen_t servle
 		n=recvfrom(sockfd,recvline,MAXLINE,0,(struct sockaddr*)&caddr,&clilen);
 		recvline[n]=0;
 		fputs(recvline, stdout);
-		n=recvfrom(sockfd,recvline,MAXLINE,0,(struct sockaddr*)&caddr,&clilen);
-		recvline[n]=0;
-		fputs(recvline, stdout);
+		// n=recvfrom(sockfd,recvline,MAXLINE,0,(struct sockaddr*)&caddr,&clilen);
+		// recvline[n]=0;
+		// fputs(recvline, stdout);
 	}
 }
